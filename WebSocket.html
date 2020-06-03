@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<title>NODE_SNV Test</title>
+<script language="javascript" type="text/javascript">
+  var wsUri = "ws://127.0.0.1:777/";
+  var output;
+  var xmlhttp;
+  var jsonData = {};
+
+  function loadData(url, cfunc) {
+	console.log("aaa");
+    if (window.XMLHttpRequest) {
+      // code for IE7+, Firefox, Chrome, Opera, Safari
+      xmlhttp = new XMLHttpRequest();
+    } else {
+      // code for IE6, IE5
+      xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    xmlhttp.onreadystatechange = cfunc;
+    xmlhttp.open("GET", url, true);
+    xmlhttp.send();
+  };
+
+  function readFile(url) {
+    loadData(url, function () {
+      if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+        //读取的数据 ==== 
+        jsonData = xmlhttp.responseText;
+		output = document.getElementById("output");
+		testWebSocket();
+        return xmlhttp.responseText;
+      } else {
+        return '';
+      }
+    })
+  };
+
+  function init() {
+	readFile('servers/servers.json');
+  }
+
+  function testWebSocket() {
+    websocket = new WebSocket(wsUri);
+    websocket.onopen = function (evt) {
+      onOpen(evt)
+    };
+    websocket.onclose = function (evt) {
+      onClose(evt)
+    };
+    websocket.onmessage = function (evt) {
+      onMessage(evt)
+    };
+    websocket.onerror = function (evt) {
+      onError(evt)
+    };
+  }
+
+  function onOpen(evt) {
+    writeToScreen("CONNECTED");
+    doSend();
+  }
+
+  function onClose(evt) {
+    writeToScreen("DISCONNECTED");
+  }
+
+  function onMessage(evt) {
+    writeToScreen('<span style="color: blue;">RESPONSE: ' + evt.data + '</span>');
+    // websocket.close();
+  }
+
+  function onError(evt) {
+    writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data);
+  }
+
+  function doSend(message) {
+    writeToScreen("SENT: " + jsonData);
+    //websocket.send(jsonData);
+  }
+
+  function writeToScreen(message) {
+    var pre = document.createElement("p");
+    pre.style.wordWrap = "break-word";
+    pre.innerHTML = message;
+    output.appendChild(pre);
+  }
+
+  window.addEventListener("load", init, false);  
+</script>
+<h2>NODE_SNV Test</h2>
+<div id="output"></div>
+
+</html>

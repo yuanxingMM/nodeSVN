@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "bufferutil": "^4.0.1",
+    "nodejs-websocket": "^1.7.2",
+    "shelljs": "^0.8.4",
+    "utf-8-validate": "^5.0.2",
+    "ws": "^7.2.5"
+  }
+}
